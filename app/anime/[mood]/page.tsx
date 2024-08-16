@@ -38,7 +38,7 @@ export default async function AnimePage({ params }: AnimePageProps) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-red-400 via-pink-500 to-purple-500 p-8">
         <h1 className="text-4xl font-bold text-white mb-8">Oops! Something went wrong</h1>
-        <p className="text-white text-lg">We couldn't fetch an anime recommendation at this time. Please try again later.</p>
+        <p className="text-white text-lg">We couldn&apos;t fetch an anime recommendation at this time. Please try again later.</p>
         {error instanceof Error && (
           <p className="text-white text-sm mt-4">Error details: {error.message}</p>
         )}
