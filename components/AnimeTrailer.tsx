@@ -28,8 +28,14 @@ export default function AnimeTrailer({ videoId, animeTitle, animeImage }: AnimeT
               objectFit="cover"
               className="rounded-lg"
             />
-            <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white text-lg">
-              No trailer available
+            <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white text-lg flex-col">
+              <p>No trailer available</p>
+              <p className="text-sm mt-2">This could be due to:</p>
+              <ul className="text-sm list-disc list-inside mt-1">
+                <li>No trailer found for this anime</li>
+                <li>YouTube API quota exceeded</li>
+                <li>Network or API issues</li>
+              </ul>
             </div>
           </div>
         )}

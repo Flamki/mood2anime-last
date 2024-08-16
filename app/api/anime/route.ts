@@ -1,20 +1,25 @@
-// File: pages/api/anime.ts (or app/api/anime/route.ts if using App Router)
+// File: app/api/anime/route.ts
 
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextResponse } from 'next/server';
 
 const API_URL = 'https://api.myanimelist.net/v2';
 const CLIENT_ID = process.env.NEXT_PUBLIC_MAL_CLIENT_ID;
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { query } = req.query;
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const query = searchParams.get('query');
+
+  console.log(`API Route: Received request for query: ${query}`);
 
   if (!CLIENT_ID) {
-    return res.status(500).json({ error: 'MyAnimeList Client ID is not set' });
+    console.error('API Route: MyAnimeList Client ID is not set');
+    return NextResponse.json({ error: 'MyAnimeList Client ID is not set' }, { status: 500 });
   }
 
   const url = `${API_URL}/anime?q=${query}&limit=100&fields=id,title,synopsis,main_picture,genres`;
 
   try {
+    console.log(`API Route: Sending request to MyAnimeList API: ${url}`);
     const response = await fetch(url, {
       headers: {
         'X-MAL-CLIENT-ID': CLIENT_ID,
@@ -22,12 +27,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
 
     if (!response.ok) {
-      throw new Error(`API request failed: ${response.status}`);
+      const errorText = await response.text();
+      console.error(`API Route: MyAnimeList API request failed. Status: ${response.status}. Error: ${errorText}`);
+      return NextResponse.json({ error: `MyAnimeList API request failed: ${response.status}. ${errorText}` }, { status: response.status });
     }
 
     const data = await response.json();
-    res.status(200).json(data);
+    console.log(`API Route: Received data from MyAnimeList API. Number of items: ${data.data ? data.data.length : 0}`);
+    return NextResponse.json(data);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch anime data' });
+    console.error('API Route: Error fetching anime data:', error);
+    return NextResponse.json({ error: 'Failed to fetch anime data' }, { status: 500 });
   }
 }
