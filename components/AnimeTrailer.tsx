@@ -9,32 +9,31 @@ interface AnimeTrailerProps {
 }
 
 export default function AnimeTrailer({ videoId, animeTitle, animeImage }: AnimeTrailerProps) {
-  if (videoId) {
-    return (
-      <div className="aspect-w-16 aspect-h-9 w-full max-w-2xl">
-        <iframe
-          src={`https://www.youtube.com/embed/${videoId}`}
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-          className="w-full h-full rounded-lg shadow-lg"
-        ></iframe>
+  return (
+    <div className="w-full max-w-4xl mx-auto">
+      <div className="aspect-w-16 aspect-h-9 bg-gray-200 rounded-lg overflow-hidden" style={{ height: '480px' }}>
+        {videoId ? (
+          <iframe
+            src={`https://www.youtube.com/embed/${videoId}`}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            className="w-full h-full"
+          ></iframe>
+        ) : (
+          <div className="relative w-full h-full">
+            <Image 
+              src={animeImage} 
+              alt={`${animeTitle} cover`} 
+              layout="fill"
+              objectFit="cover"
+              className="rounded-lg"
+            />
+            <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white text-lg">
+              No trailer available
+            </div>
+          </div>
+        )}
       </div>
-    );
-  } else {
-    return (
-      <div className="w-full max-w-2xl">
-        <Image 
-          src={animeImage} 
-          alt={`${animeTitle} cover`} 
-          width={500}
-          height={750}
-          layout="responsive"
-          className="rounded-lg shadow-lg"
-        />
-        <p className="text-white text-sm mt-2">
-          No trailer available. Showing anime cover image instead.
-        </p>
-      </div>
-    );
-  }
+    </div>
+  );
 }

@@ -67,10 +67,12 @@ export default function AnimeDisplay({ initialAnime, initialVideoId, mood }: Ani
   }
 
   return (
-    <>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 p-8">
       <h1 className="text-4xl font-bold text-white mb-8">{anime.title}</h1>
-      <AnimeTrailer videoId={videoId} animeTitle={anime.title} animeImage={anime.main_picture.large} />
-      <p className="text-white text-lg mt-4 mb-8">{anime.synopsis}</p>
+      <div className="w-full max-w-4xl mb-8">
+        <AnimeTrailer videoId={videoId} animeTitle={anime.title} animeImage={anime.main_picture.large} />
+      </div>
+      <p className="text-white text-lg mb-8 max-w-4xl">{anime.synopsis}</p>
       <div className="flex space-x-4">
         <button
           onClick={fetchNextAnime}
@@ -82,6 +84,6 @@ export default function AnimeDisplay({ initialAnime, initialVideoId, mood }: Ani
           Choose Another Mood
         </Link>
       </div>
-    </>
+    </div>
   );
 }
