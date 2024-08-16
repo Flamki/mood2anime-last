@@ -1,3 +1,5 @@
+// File: components/AnimeTrailer.tsx
+
 import Image from 'next/image';
 
 interface AnimeTrailerProps {
@@ -23,9 +25,9 @@ export default function AnimeTrailer({ videoId, animeTitle, animeImage }: AnimeT
       <div className="w-full max-w-2xl">
         <Image 
           src={animeImage} 
-          alt={`${animeTitle} cover`}
+          alt={`${animeTitle} cover`} 
           width={500}
-          height={300}
+          height={750}
           layout="responsive"
           className="rounded-lg shadow-lg"
         />
