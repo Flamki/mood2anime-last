@@ -39,17 +39,6 @@ export default function Home() {
         <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 z-0" />
       )}
 
-      {/* Fallback Image (optional) */}
-      {videoError && (
-        <Image
-          src="/fallback-image.jpg"
-          alt="Fallback background"
-          layout="fill"
-          objectFit="cover"
-          className="z-0"
-        />
-      )}
-
       {/* Content Overlay */}
       <div className="relative z-10 text-center">
         <h1 className="text-4xl font-bold text-white mb-8 text-shadow-lg">Mood2Anime</h1>
@@ -58,10 +47,10 @@ export default function Home() {
             href="/moods" 
             className="bg-white bg-opacity-20 text-white font-semibold py-2 px-4 rounded-full shadow-lg hover:bg-opacity-30 transition duration-300 backdrop-filter backdrop-blur-sm"
           >
-            Anime
+            Show me anime according to my mood
           </Link>
           <Link 
-            href="/manga" 
+            href="/manga/moods" 
             className="bg-white bg-opacity-20 text-white font-semibold py-2 px-4 rounded-full shadow-lg hover:bg-opacity-30 transition duration-300 backdrop-filter backdrop-blur-sm"
           >
             Manga
