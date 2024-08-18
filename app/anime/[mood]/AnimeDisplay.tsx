@@ -1,79 +1,130 @@
-// File: app/anime/[mood]/AnimeDisplay.tsx
-
 'use client';
 
-import { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
-import AnimeTrailer from '../../../components/AnimeTrailer';
 import { Mood, Anime } from '../../../types';
 import { getAnimeByMood } from '../../../lib/myAnimeList';
-import { getYouTubeVideoId } from '../../../lib/youtube';
 
 interface AnimeDisplayProps {
-  initialAnime: Anime;
-  initialVideoId: string | null;
-  mood: Mood;
+  initialMood: Mood;
 }
 
-export default function AnimeDisplay({ initialAnime, initialVideoId, mood }: AnimeDisplayProps) {
-  const [anime, setAnime] = useState(initialAnime);
-  const [videoId, setVideoId] = useState(initialVideoId);
-  const [loading, setLoading] = useState(false);
+export default function AnimeDisplay({ initialMood }: AnimeDisplayProps) {
+  const [anime, setAnime] = useState<Anime | null>(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState(false);
 
-  const fetchNextAnime = async () => {
+  const fetchAnime = useCallback(async () => {
     setLoading(true);
     setError(null);
+    setExpanded(false);
     try {
-      console.log(`AnimeDisplay: Fetching new anime for mood: ${mood}`);
-      const newAnime = await getAnimeByMood(mood);
-      console.log('AnimeDisplay: Fetched new anime:', newAnime);
+      const newAnime = await getAnimeByMood(initialMood);
       setAnime(newAnime);
-
-      if (newAnime.id !== 0) {  // Only fetch video if it's not the placeholder anime
-        try {
-          console.log(`AnimeDisplay: Fetching YouTube video for: ${newAnime.title} anime trailer`);
-          const newVideoId = await getYouTubeVideoId(`${newAnime.title} anime trailer`);
-          console.log('AnimeDisplay: Fetched video ID:', newVideoId);
-          setVideoId(newVideoId);
-        } catch (youtubeError) {
-          console.error('AnimeDisplay: Error fetching YouTube video:', youtubeError);
-          setVideoId(null);
-        }
-      } else {
-        setVideoId(null);
-      }
     } catch (error) {
-      console.error('AnimeDisplay: Error fetching anime:', error);
-      setError(`Failed to fetch a new anime. ${error instanceof Error ? error.message : String(error)}`);
+      console.error('Error fetching anime:', error);
+      setError(`Failed to fetch anime. Error: ${error instanceof Error ? error.message : String(error)}`);
     } finally {
       setLoading(false);
     }
+  }, [initialMood]);
+
+  useEffect(() => {
+    fetchAnime();
+  }, [fetchAnime]);
+
+  const truncateSynopsis = (text: string, maxLength: number) => {
+    if (text.length <= maxLength) return text;
+    return text.slice(0, maxLength) + '...';
   };
 
   if (loading) {
-    return <div className="text-white text-2xl">Loading...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-black">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-full h-full object-cover"
+        >
+          <source src="/loader.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-900">
+        <div className="text-red-500 text-2xl p-6 text-center">
+          {error}
+        </div>
+      </div>
+    );
+  }
+
+  if (!anime) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-900">
+        <div className="text-white text-2xl p-6 text-center">
+          No anime found
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 p-8">
-      <h1 className="text-4xl font-bold text-white mb-8">{anime.title}</h1>
-      <div className="w-full max-w-4xl mb-8">
-        <AnimeTrailer videoId={videoId} animeTitle={anime.title} animeImage={anime.main_picture.large} />
+    <div className="flex items-center justify-center min-h-screen bg-gray-900 p-4">
+      <div className="w-full max-w-2xl bg-gray-800 rounded-lg overflow-hidden shadow-xl">
+        <div className="relative w-full bg-gray-700" style={{ height: '400px' }}>
+          <Image
+            src={anime.main_picture.large}
+            alt={anime.title}
+            layout="fill"
+            objectFit="contain"
+          />
+        </div>
+        <div className="p-6">
+          <h2 className="text-3xl font-bold text-white mb-2 truncate">{anime.title}</h2>
+          <div className="flex items-center text-gray-400 mb-4">
+            <span className="mr-2">{anime.mean ? `⭐ ${anime.mean.toFixed(1)}/10` : 'Not rated'}</span>
+            <span className="mr-2">•</span>
+            <span>{anime.num_episodes ? `${anime.num_episodes} episodes` : 'Unknown episodes'}</span>
+          </div>
+          <div className="flex flex-wrap gap-2 mb-4">
+            {anime.genres.map(genre => (
+              <span key={genre.id} className="px-2 py-1 bg-red-600 text-white text-sm rounded">
+                {genre.name}
+              </span>
+            ))}
+          </div>
+          <div className="text-gray-300 mb-6">
+            <p className={`${expanded ? '' : 'line-clamp-3'}`}>
+              {expanded ? anime.synopsis : truncateSynopsis(anime.synopsis, 250)}
+            </p>
+            {anime.synopsis.length > 250 && (
+              <button 
+                onClick={() => setExpanded(!expanded)} 
+                className="text-blue-400 hover:underline mt-2"
+              >
+                {expanded ? 'Read Less' : 'Read More'}
+              </button>
+            )}
+          </div>
+          <div className="flex justify-between">
+            <Link href="/moods" className="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-600">
+              Change Mood
+            </Link>
+            <button onClick={fetchAnime} className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-500">
+              Next Anime
+            </button>
+          </div>
+        </div>
       </div>
-      <p className="text-white text-lg mb-8 max-w-4xl">{anime.synopsis}</p>
-      <div className="flex space-x-4">
-        <button
-          onClick={fetchNextAnime}
-          className="bg-white text-purple-600 font-semibold py-2 px-4 rounded-full shadow-lg hover:bg-purple-100 transition duration-300"
-        >
-          {anime.id === 0 ? "Try Again" : "Next Anime"}
-        </button>
-        <Link href="/moods" className="bg-purple-600 text-white font-semibold py-2 px-4 rounded-full shadow-lg hover:bg-purple-700 transition duration-300">
-          Choose Another Mood
-        </Link>
-      </div>
-      {error && <p className="text-red-300 mt-4">{error}</p>}
     </div>
   );
 }

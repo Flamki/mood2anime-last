@@ -1,13 +1,16 @@
-// File: next.config.mjs
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    // Remove the appDir option as it's no longer needed in Next.js 13+
-  },
   images: {
-    domains: ['cdn.myanimelist.net', 'via.placeholder.com'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'cdn.myanimelist.net',
+        port: '',
+        pathname: '/images/**',
+      },
+    ],
   },
+  // ... any other configurations you have
 };
 
 export default nextConfig;

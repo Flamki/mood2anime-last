@@ -1,102 +1,159 @@
-// File: lib/myAnimeList.ts
-
 import { Mood, Anime } from '../types';
 
-const moodKeywords: Record<Mood, string[]> = {
-  happy: ['comedy', 'slice of life', 'feel-good', 'lighthearted'],
-  sad: ['drama', 'tragedy', 'emotional', 'melancholy'],
-  majestic: ['fantasy', 'adventure', 'epic', 'grand'],
-  crazy: ['action', 'thriller', 'supernatural', 'bizarre']
+const API_URL = '/api/anime';
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
+interface CacheEntry {
+  data: Anime[];
+  timestamp: number;
+}
+
+const cache: Record<string, CacheEntry> = {};
+
+const moodKeywords: Record<string, string[]> = {
+  'Happy': ['comedy', 'slice of life', 'feel-good', 'lighthearted'],
+  'Sad': ['drama', 'tragedy', 'emotional', 'tear-jerker'],
+  'Funny': ['comedy', 'parody', 'gag', 'humor'],
+  'Epic': ['action', 'fantasy', 'grand', 'epic'],
+  'Chill': ['slice of life', 'iyashikei', 'relaxing', 'calm'],
+  'Crazy': ['absurd', 'bizarre', 'surreal', 'over-the-top'],
+  'Majestic': ['fantasy', 'historical', 'grand', 'epic'],
+  'Nostalgic': ['80s', '90s', 'retro', 'childhood'],
+  'Romantic': ['romance', 'love', 'shoujo', 'josei'],
+  'Mysterious': ['mystery', 'suspense', 'thriller', 'detective'],
+  'Yandere': ['psychological', 'romance', 'horror', 'obsession'],
+  'Angry': ['action', 'violent', 'intense', 'rage'],
+  'Lonely': ['psychological', 'drama', 'introspective', 'solitude'],
+  'Sports': ['sports', 'competition', 'teamwork', 'athletic'],
+  'Power-ups': ['shounen', 'action', 'super power', 'transformation'],
+  'Heartwarming': ['family', 'friendship', 'emotional', 'uplifting'],
+  'Baka': ['comedy', 'school', 'slapstick', 'silly'],
+  'Dark': ['psychological', 'horror', 'thriller', 'gore'],
+  'Fan service': ['ecchi', 'harem', 'fanservice', 'sexy'],
+  'Heroic': ['superhero', 'action', 'justice', 'hero'],
+  'Overpowered': ['action', 'fantasy', 'OP protagonist', 'strong'],
+  'Plot Twist': ['mystery', 'thriller', 'psychological', 'mindbending'],
+  'Melancholic': ['drama', 'slice of life', 'emotional', 'bittersweet'],
+  'Hype': ['action', 'shounen', 'exciting', 'adrenaline']
 };
 
-async function fetchAnime(query: string): Promise<any> {
-  console.log(`fetchAnime: Sending request for query: ${query}`);
-  const url = `/api/anime?query=${encodeURIComponent(query)}`;
-
-  try {
-    const response = await fetch(url);
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error(`fetchAnime: API request failed. Status: ${response.status}. Error: ${errorText}`);
-      throw new Error(`API request failed: ${response.status}. ${errorText}`);
-    }
-
-    const data = await response.json();
-    if (data.error) {
-      console.error(`fetchAnime: API returned an error: ${data.error}`);
-      throw new Error(`API error: ${data.error}`);
-    }
-    console.log(`fetchAnime: Received data. Number of items: ${data.data ? data.data.length : 0}`);
-    return data;
-  } catch (error) {
-    console.error('fetchAnime: Error:', error);
-    throw error;
+async function fetchAnimeForKeyword(keyword: string): Promise<Anime[]> {
+  if (cache[keyword] && Date.now() - cache[keyword].timestamp < CACHE_DURATION) {
+    console.log(`Returning cached data for keyword: ${keyword}`);
+    return cache[keyword].data;
   }
+
+  const response = await fetch(`${API_URL}?query=${encodeURIComponent(keyword)}`);
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`API request failed: ${response.status}. ${errorText}`);
+  }
+  const data = await response.json();
+  if (!data.data || !Array.isArray(data.data)) {
+    throw new Error(`Invalid API response: ${JSON.stringify(data)}`);
+  }
+  const animeList = data.data.map((item: any) => ({
+    id: item.node.id,
+    title: item.node.title,
+    synopsis: item.node.synopsis,
+    main_picture: item.node.main_picture,
+    genres: item.node.genres,
+    mean: item.node.mean,
+    num_episodes: item.node.num_episodes,
+  }));
+
+  console.log(`Sample anime genres for ${keyword}:`, animeList.slice(0, 3).map((a: Anime) => ({
+    title: a.title,
+    genres: a.genres.map((g: { id: number; name: string }) => g.name)
+  })));
+
+  cache[keyword] = { data: animeList, timestamp: Date.now() };
+  return animeList;
+}
+
+function getRelevantGenres(mood: string): string[] {
+  const genreMap: Record<string, string[]> = {
+    'Happy': ['comedy', 'slice of life', 'shoujo'],
+    'Sad': ['drama', 'tragedy', 'psychological'],
+    'Funny': ['comedy', 'parody', 'gag humor'],
+    'Epic': ['action', 'fantasy', 'sci-fi', 'adventure'],
+    'Chill': ['slice of life', 'iyashikei', 'shoujo'],
+    'Crazy': ['psychological', 'thriller', 'horror'],
+    'Majestic': ['fantasy', 'historical', 'supernatural'],
+    'Nostalgic': ['historical', 'drama', 'slice of life'],
+    'Romantic': ['romance', 'shoujo', 'josei'],
+    'Mysterious': ['mystery', 'thriller', 'psychological'],
+    'Yandere': ['psychological', 'thriller', 'horror'],
+    'Angry': ['action', 'martial arts', 'seinen'],
+    'Lonely': ['psychological', 'drama', 'slice of life'],
+    'Sports': ['sports', 'shounen', 'school', 'comedy'],
+    'Power-ups': ['action', 'shounen', 'super power'],
+    'Heartwarming': ['slice of life', 'drama', 'shoujo'],
+    'Baka': ['comedy', 'school', 'shounen'],
+    'Dark': ['psychological', 'horror', 'thriller', 'seinen'],
+    'Fan service': ['ecchi', 'harem', 'shounen'],
+    'Heroic': ['action', 'shounen', 'super power'],
+    'Overpowered': ['action', 'fantasy', 'shounen'],
+    'Plot Twist': ['mystery', 'psychological', 'thriller'],
+    'Melancholic': ['drama', 'psychological', 'slice of life'],
+    'Hype': ['action', 'shounen', 'sports']
+  };
+
+  return genreMap[mood] || [];
 }
 
 export async function getAnimeByMood(mood: Mood): Promise<Anime> {
   console.log(`getAnimeByMood: Starting for mood: ${mood}`);
-
-  const keywords = moodKeywords[mood];
-  let allAnime: any[] = [];
+  const normalizedMood = mood.charAt(0).toUpperCase() + mood.slice(1).toLowerCase();
+  const keywords = moodKeywords[normalizedMood];
+  console.log(`Keywords for mood ${normalizedMood}:`, keywords);
+  
+  if (!keywords || !Array.isArray(keywords)) {
+    throw new Error(`Invalid mood: ${mood}`);
+  }
+  
+  let allAnime: Anime[] = [];
   let errors: string[] = [];
 
   for (const keyword of keywords) {
     try {
       console.log(`getAnimeByMood: Fetching anime for keyword: ${keyword}`);
-      const data = await fetchAnime(keyword);
-      if (data.data && data.data.length > 0) {
-        console.log(`getAnimeByMood: Fetched ${data.data.length} anime for keyword: ${keyword}`);
-        allAnime = allAnime.concat(data.data);
-      } else {
-        console.log(`getAnimeByMood: No anime found for keyword: ${keyword}`);
-      }
+      const animeList = await fetchAnimeForKeyword(keyword);
+      console.log(`Fetched ${animeList.length} anime for keyword: ${keyword}`);
+      allAnime = allAnime.concat(animeList);
     } catch (error) {
       console.error(`getAnimeByMood: Error fetching anime for keyword ${keyword}:`, error);
-      errors.push(`Failed to fetch anime for keyword: ${keyword}`);
+      errors.push(`${keyword}: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
   console.log(`getAnimeByMood: Total anime fetched: ${allAnime.length}`);
 
-  if (allAnime.length === 0) {
-    console.log('getAnimeByMood: No anime found for mood-specific keywords. Trying a broader search...');
-    try {
-      const data = await fetchAnime('');
-      if (data.data && data.data.length > 0) {
-        allAnime = data.data;
-        console.log(`getAnimeByMood: Fetched ${allAnime.length} anime in broader search`);
-      } else {
-        console.log('getAnimeByMood: No anime found in broader search');
-        errors.push('No anime found in broader search');
-      }
-    } catch (error) {
-      console.error('getAnimeByMood: Error in broader anime search:', error);
-      errors.push('Failed to perform broader anime search');
-    }
+  // Filter anime based on genres
+  const relevantGenres = getRelevantGenres(normalizedMood);
+  console.log(`Relevant genres for ${normalizedMood}:`, relevantGenres);
+
+  const filteredAnime = allAnime.filter((anime: Anime) => 
+    anime && anime.genres && Array.isArray(anime.genres) &&
+    anime.genres.some((genre: { id: number; name: string }) => 
+      genre && genre.name && relevantGenres.includes(genre.name.toLowerCase())
+    )
+  );
+
+  console.log(`getAnimeByMood: Filtered anime count: ${filteredAnime.length}`);
+  console.log(`getAnimeByMood: First few filtered anime:`, filteredAnime.slice(0, 3).map((a: Anime) => ({
+    title: a.title,
+    genres: a.genres.map((g: { id: number; name: string }) => g.name)
+  })));
+
+  if (filteredAnime.length === 0) {
+    const errorMessage = `No suitable anime found for the mood: ${mood}. Total fetched: ${allAnime.length}, Errors: ${errors.join(', ')}`;
+    console.error(errorMessage);
+    throw new Error(errorMessage);
   }
 
-  // Filter out any null or undefined entries
-  allAnime = allAnime.filter(anime => anime && anime.node);
-
-  if (allAnime.length === 0) {
-    console.error(`getAnimeByMood: No anime found for the mood: ${mood}. Errors: ${errors.join(', ')}`);
-    // Instead of throwing an error, return a default or placeholder anime
-    return {
-      id: 0,
-      title: "No Anime Found",
-      synopsis: `We couldn't find an anime for the ${mood} mood. Please try a different mood or check the API connection.`,
-      mean: 0,
-      genres: [],
-      main_picture: {
-        medium: "https://via.placeholder.com/200x300?text=No+Anime+Found",
-        large: "https://via.placeholder.com/400x600?text=No+Anime+Found"
-      }
-    };
-  }
-
-  const randomIndex = Math.floor(Math.random() * allAnime.length);
-  const selectedAnime = allAnime[randomIndex].node as Anime;
+  const randomIndex = Math.floor(Math.random() * filteredAnime.length);
+  const selectedAnime = filteredAnime[randomIndex];
   console.log(`getAnimeByMood: Selected anime: ${selectedAnime.title}`);
 
   return selectedAnime;
