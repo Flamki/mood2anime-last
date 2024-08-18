@@ -56,7 +56,7 @@ export default function Home() {
             Manga
           </Link>
           <Link 
-            href="/meme" 
+            href="/meme/moods" 
             className="bg-white bg-opacity-20 text-white font-semibold py-2 px-4 rounded-full shadow-lg hover:bg-opacity-30 transition duration-300 backdrop-filter backdrop-blur-sm"
           >
             Meme
