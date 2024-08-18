@@ -47,7 +47,7 @@ export default function Home() {
             href="/moods" 
             className="bg-white bg-opacity-20 text-white font-semibold py-2 px-4 rounded-full shadow-lg hover:bg-opacity-30 transition duration-300 backdrop-filter backdrop-blur-sm"
           >
-            Show me anime according to my mood
+            Anime
           </Link>
           <Link 
             href="/manga/moods" 

@@ -56,24 +56,24 @@ export default function MemeDisplay({ initialMood }: MemeDisplayProps) {
     }
   };
 
-  const getMemeSubreddit = (mood: string): string => {
-    const moodSubreddits: Record<string, string> = {
-      funny: 'AnimeFunny',
-      wholesome: 'wholesomeanimemes',
-      savage: 'Animemes',
-      cute: 'awwnime',
-      epic: 'Animemes',
-      cringe: 'animememes',
-      relatable: 'anime_irl',
-      nostalgic: 'Animemes',
-      dank: 'Animemes',
-      nerdy: 'Animemes',
-      otaku: 'otakumemes',
-      spicy: 'AnimemesWithNoRules',
-      'fan service': 'animememes',
-      'plot twist': 'Animemes'
+  const getMemeSubreddit = (mood: string): string[] => {
+    const moodSubreddits: Record<string, string[]> = {
+      funny: ['AnimeFunny', 'animememes', 'Animemes'],
+      wholesome: ['wholesomeanimemes', 'wholesomememes', 'WholesomeAnimemes'],
+      savage: ['Animemes', 'animememes', 'goodanimemes'],
+      cute: ['awwnime', 'cutelittlefangs', 'AnimeGirls'],
+      epic: ['Animemes', 'animegifs', 'anime'],
+      cringe: ['animememes', 'Animemes', 'goodanimemes'],
+      relatable: ['anime_irl', 'animememes', 'Animemes'],
+      nostalgic: ['Animemes', 'retrogames', '90sAnime'],
+      dank: ['Animemes', 'goodanimemes', 'dankmemes'],
+      nerdy: ['Animemes', 'anime', 'otaku'],
+      otaku: ['otakumemes', 'anime', 'Animemes'],
+      spicy: ['AnimemesWithNoRules', 'Animemes', 'goodanimemes'],
+      'fan service': ['animememes', 'Animemes', 'ecchi'],
+      'plot twist': ['Animemes', 'goodanimemes', 'anime']
     };
-    return moodSubreddits[mood.toLowerCase()] || 'Animemes';
+    return moodSubreddits[mood.toLowerCase()] || ['Animemes', 'animememes', 'goodanimemes'];
   };
 
   const isYouTubeLink = (url: string): boolean => {
@@ -91,14 +91,22 @@ export default function MemeDisplay({ initialMood }: MemeDisplayProps) {
     return `https://www.youtube.com/embed/${videoId}`;
   };
 
-  const fetchMeme = useCallback(async () => {
+  const isGalleryLink = (url: string): boolean => {
+    return url.includes('reddit.com/gallery/');
+  };
+
+  const fetchMeme = useCallback(async (subredditIndex = 0) => {
     console.log('Fetching meme for mood:', initialMood);
     setLoading(true);
     setError(null);
     try {
       const accessToken = await getAccessToken();
-      const subreddit = getMemeSubreddit(initialMood);
-      console.log('Fetching from subreddit:', subreddit);
+      const subreddits = getMemeSubreddit(initialMood);
+      if (subredditIndex >= subreddits.length) {
+        throw new Error(`No suitable memes found for mood: ${initialMood}`);
+      }
+      const subreddit = subreddits[subredditIndex];
+      console.log(`Fetching from subreddit: ${subreddit} (attempt ${subredditIndex + 1})`);
       const response = await fetch(`https://oauth.reddit.com/r/${subreddit}/random`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -107,17 +115,41 @@ export default function MemeDisplay({ initialMood }: MemeDisplayProps) {
       
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(`HTTP error! status: ${response.status}. ${errorText}`);
+        console.error(`Error fetching from ${subreddit}: ${errorText}`);
+        return fetchMeme(subredditIndex + 1); // Try the next subreddit
       }
 
       const data = await response.json();
-      console.log('Meme data received:', data);
-      
+      console.log('API response:', data);
+
       if (!data || !Array.isArray(data) || data.length === 0 || !data[0].data || !data[0].data.children || data[0].data.children.length === 0) {
-        throw new Error('Invalid meme data received');
+        console.error(`Invalid or empty response for subreddit: ${subreddit}`);
+        return fetchMeme(subredditIndex + 1); // Try the next subreddit
       }
 
       const memeData = data[0].data.children[0].data;
+      if (!memeData.title || !memeData.url) {
+        console.error(`Incomplete meme data for subreddit: ${subreddit}`);
+        return fetchMeme(subredditIndex + 1); // Try the next subreddit
+      }
+
+      // Handle gallery links
+      if (isGalleryLink(memeData.url)) {
+        if (memeData.gallery_data && memeData.media_metadata) {
+          const firstImageId = memeData.gallery_data.items[0].media_id;
+          const firstImage = memeData.media_metadata[firstImageId];
+          if (firstImage && firstImage.s) {
+            memeData.url = firstImage.s.u;
+          } else {
+            console.error(`Invalid gallery data for subreddit: ${subreddit}`);
+            return fetchMeme(subredditIndex + 1); // Try the next subreddit
+          }
+        } else {
+          console.error(`Invalid gallery data for subreddit: ${subreddit}`);
+          return fetchMeme(subredditIndex + 1); // Try the next subreddit
+        }
+      }
+
       setMeme({
         title: memeData.title,
         url: memeData.url,
@@ -128,7 +160,7 @@ export default function MemeDisplay({ initialMood }: MemeDisplayProps) {
       });
     } catch (error) {
       console.error('Error fetching meme:', error);
-      setError(`Failed to fetch meme. Error: ${error instanceof Error ? error.message : String(error)}`);
+      setError(`Failed to fetch meme. ${error instanceof Error ? error.message : String(error)}`);
     } finally {
       setLoading(false);
     }
@@ -204,17 +236,8 @@ export default function MemeDisplay({ initialMood }: MemeDisplayProps) {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-black">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="w-full h-full object-cover"
-        >
-          <source src="/loader.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
+      <div className="flex items-center justify-center min-h-screen bg-gray-900">
+        <div className="text-white text-2xl">Loading...</div>
       </div>
     );
   }
@@ -224,6 +247,12 @@ export default function MemeDisplay({ initialMood }: MemeDisplayProps) {
       <div className="flex items-center justify-center min-h-screen bg-gray-900">
         <div className="text-red-500 text-2xl p-6 text-center">
           {error}
+          <button 
+            onClick={() => fetchMeme()} 
+            className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          >
+            Try Again
+          </button>
         </div>
       </div>
     );
@@ -243,7 +272,7 @@ export default function MemeDisplay({ initialMood }: MemeDisplayProps) {
     <div className="flex items-center justify-center min-h-screen bg-gray-900 p-4">
       <div className="w-full max-w-4xl bg-gray-800 rounded-lg overflow-hidden shadow-xl">
         <div className="relative w-full bg-gray-700" style={{ height: '600px' }}>
-          {meme.isVideo ? (
+          {meme.isVideo || isYouTubeLink(meme.url) ? (
             isYouTubeLink(meme.url) ? (
               <iframe
                 src={getYouTubeEmbedUrl(meme.url)}
@@ -302,12 +331,12 @@ export default function MemeDisplay({ initialMood }: MemeDisplayProps) {
                 </div>
               )}
             </div>
-            <button onClick={fetchMeme} className="bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-500 transition duration-300">
-              Next Meme
-            </button>
-          </div>
+            <button onClick={() => fetchMeme()} className="bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-500 transition duration-300">
+              Next
+              </button>
         </div>
       </div>
     </div>
-  );
+  </div>
+);
 }
