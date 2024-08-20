@@ -19,18 +19,7 @@ const moods: { name: string; emoji: string }[] = [
 
 export default function MemeMoodsPage() {
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
-      <header className="p-4">
-        <div className="max-w-6xl mx-auto flex justify-between items-center">
-          <Link href="/" className="text-2xl font-bold text-blue-400">Mood2Anime</Link>
-          <nav>
-            <Link href="/moods" className="mr-4 hover:text-blue-400 transition duration-300">Anime</Link>
-            <Link href="/manga/moods" className="mr-4 hover:text-blue-400 transition duration-300">Manga</Link>
-            <Link href="/meme/moods" className="mr-4 text-blue-400 hover:text-blue-400 transition duration-300">Meme</Link>
-            <Link href="/talk-to-fav" className="hover:text-blue-400 transition duration-300">Chat</Link>
-          </nav>
-        </div>
-      </header>
+    <div className="min-h-screen bg-gray-900 text-white pt-20">
       <main className="container mx-auto px-4 py-8">
         <h1 className="text-4xl font-bold text-center mb-12">Choose Your Meme Mood</h1>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">

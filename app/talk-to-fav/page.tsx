@@ -37,18 +37,7 @@ export default function TalkToFavPage() {
   }, [isAutoPlaying, nextCard]);
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white overflow-x-hidden">
-      <header className="p-4">
-        <div className="max-w-6xl mx-auto flex justify-between items-center">
-          <Link href="/" className="text-2xl font-bold text-blue-400">Mood2Anime</Link>
-          <nav>
-            <Link href="/moods" className="mr-4 hover:text-blue-400 transition duration-300">Anime</Link>
-            <Link href="/manga/moods" className="mr-4 hover:text-blue-400 transition duration-300">Manga</Link>
-            <Link href="/meme/moods" className="mr-4 hover:text-blue-400 transition duration-300">Meme</Link>
-            <Link href="/talk-to-fav" className="text-blue-400 hover:text-blue-400 transition duration-300">Chat</Link>
-          </nav>
-        </div>
-      </header>
+    <div className="min-h-screen bg-gray-900 text-white overflow-x-hidden pt-20">
       <main className="container mx-auto px-4 py-8 max-w-4xl">
         <h1 className="text-4xl font-bold text-center mb-8">Talk to Your Fav</h1>
         

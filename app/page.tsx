@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
 
 export default function Home() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -40,7 +39,7 @@ export default function Home() {
       )}
 
       {/* Content Overlay */}
-      <div className="relative z-10 text-center">
+      <div className="relative z-10 text-center mt-16">
         <h1 className="text-4xl font-bold text-white mb-8 text-shadow-lg">Mood2Anime</h1>
         <div className="flex flex-col space-y-4">
           <Link 
