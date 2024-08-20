@@ -184,7 +184,7 @@ export default function MemeDisplay({ initialMood }: MemeDisplayProps) {
         break;
       case 'discord':
         navigator.clipboard.writeText(`${shareText} ${shareUrl}`).then(() => {
-          alert('Meme link copied! You can now paste it in Discord.');
+          alert('Meme link copied! You can now paste it in  .');
         }).catch(err => {
           console.error('Failed to copy link: ', err);
         });
