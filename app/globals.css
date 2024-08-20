@@ -26,13 +26,44 @@ body {
     rgb(var(--background-start-rgb));
 }
 
+/* Custom scrollbar styles */
+::-webkit-scrollbar {
+  width: 10px;
+}
 
-@layer utilities {
-  .shadow-text {
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+::-webkit-scrollbar-track {
+  background: #1a202c;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #4a5568;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #718096;
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #4a5568 #1a202c;
+}
+
+/* Custom animation for gradient background */
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
   }
 }
 
-.text-shadow-lg {
-  text-shadow: 0 0 10px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 0, 0, 0.3);
+.animate-gradient-x {
+  background-size: 200% 200%;
+  animation: gradientAnimation 15s ease infinite;
 }

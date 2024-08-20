@@ -19,21 +19,31 @@ const moods: { name: string; emoji: string }[] = [
 
 export default function MemeMoodsPage() {
   return (
-    <div className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden p-4">
-      <div className="absolute inset-0 bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 animate-gradient-x"></div>
-      <div className="relative z-10 text-center w-full max-w-6xl">
-        <h1 className="text-4xl font-bold text-white mb-8">Choose Your Meme Mood</h1>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+    <div className="min-h-screen bg-gray-900 text-white">
+      <header className="p-4">
+        <div className="max-w-6xl mx-auto flex justify-between items-center">
+          <Link href="/" className="text-2xl font-bold text-blue-400">Mood2Anime</Link>
+          <nav>
+            <Link href="/moods" className="mr-4 hover:text-blue-400 transition duration-300">Anime</Link>
+            <Link href="/manga/moods" className="mr-4 hover:text-blue-400 transition duration-300">Manga</Link>
+            <Link href="/meme/moods" className="mr-4 text-blue-400 hover:text-blue-400 transition duration-300">Meme</Link>
+            <Link href="/talk-to-fav" className="hover:text-blue-400 transition duration-300">Chat</Link>
+          </nav>
+        </div>
+      </header>
+      <main className="container mx-auto px-4 py-8">
+        <h1 className="text-4xl font-bold text-center mb-12">Choose Your Meme Mood</h1>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
           {moods.map(({ name, emoji }) => (
             <Link key={name} href={`/meme/${name.toLowerCase()}`}>
-              <div className="bg-white bg-opacity-10 backdrop-filter backdrop-blur-sm text-white font-semibold py-3 px-4 rounded-lg shadow-lg hover:shadow-xl transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 text-center cursor-pointer">
-                <span className="text-2xl mr-2">{emoji}</span>
+              <div className="bg-gray-800 rounded-lg p-4 text-center hover:bg-gray-700 transition duration-300">
+                <span className="text-3xl mb-2 block">{emoji}</span>
                 <span className="text-sm">{name}</span>
               </div>
             </Link>
           ))}
         </div>
-      </div>
+      </main>
     </div>
   );
 }

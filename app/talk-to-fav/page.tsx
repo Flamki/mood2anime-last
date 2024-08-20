@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -9,7 +9,7 @@ const characters = [
   { id: 2, name: "Monkey D. Luffy", image: "/images/luffy.jpg" },
   { id: 3, name: "Goku", image: "/images/goku.jpeg" },
   { id: 4, name: "Lelouch vi Britannia", image: "/images/zero.jpeg" },
-  { id: 5, name: "gojo", image: "/images/gojo.png" },
+  { id: 5, name: "Gojo Satoru", image: "/images/gojo.png" },
   { id: 6, name: "Light Yagami", image: "/images/light.jpg" },
   { id: 7, name: "Tanjiro Kamado", image: "/images/demon.jpeg" },
 ];
@@ -25,7 +25,7 @@ export default function TalkToFavPage() {
   const handleCardClick = () => {
     nextCard();
     setIsAutoPlaying(false);
-    setTimeout(() => setIsAutoPlaying(true), 10000); // Resume auto-play after 10 seconds
+    setTimeout(() => setIsAutoPlaying(true), 10000);
   };
 
   useEffect(() => {
@@ -37,18 +37,26 @@ export default function TalkToFavPage() {
   }, [isAutoPlaying, nextCard]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-600 to-blue-500 text-white py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-5xl font-bold text-center mb-8 animate-pulse">
-          Talk to Your Fav
-        </h1>
+    <div className="min-h-screen bg-gray-900 text-white overflow-x-hidden">
+      <header className="p-4">
+        <div className="max-w-6xl mx-auto flex justify-between items-center">
+          <Link href="/" className="text-2xl font-bold text-blue-400">Mood2Anime</Link>
+          <nav>
+            <Link href="/moods" className="mr-4 hover:text-blue-400 transition duration-300">Anime</Link>
+            <Link href="/manga/moods" className="mr-4 hover:text-blue-400 transition duration-300">Manga</Link>
+            <Link href="/meme/moods" className="mr-4 hover:text-blue-400 transition duration-300">Meme</Link>
+            <Link href="/talk-to-fav" className="text-blue-400 hover:text-blue-400 transition duration-300">Chat</Link>
+          </nav>
+        </div>
+      </header>
+      <main className="container mx-auto px-4 py-8 max-w-4xl">
+        <h1 className="text-4xl font-bold text-center mb-8">Talk to Your Fav</h1>
         
-        <div className="text-3xl font-bold text-center mb-12 animate-bounce">
+        <div className="text-3xl font-bold text-center mb-12 text-blue-400 animate-pulse">
           Coming Soon!
         </div>
 
-        {/* Stacked Character Cards */}
-        <div className="relative h-96 mb-16">
+        <div className="relative h-96 mb-16 mx-auto">
           {characters.map((character, index) => (
             <div
               key={character.id}
@@ -66,16 +74,15 @@ export default function TalkToFavPage() {
                 objectFit="cover"
                 className="rounded-lg shadow-2xl"
               />
-              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black to-transparent">
+              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-gray-900 to-transparent">
                 <h2 className="text-2xl font-bold">{character.name}</h2>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Project Description */}
-        <div className="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-lg p-8 shadow-xl">
-          <h2 className="text-3xl font-bold mb-4">About This Project</h2>
+        <div className="bg-gray-800 rounded-lg p-8 shadow-xl">
+          <h2 className="text-3xl font-bold mb-4 text-blue-400">About This Project</h2>
           <p className="mb-4">
             We&apos;re pushing the boundaries of AI and deep learning to make your anime dreams a reality. 
             Imagine conversing with your favorite characters as if they were right beside you!
@@ -89,7 +96,7 @@ export default function TalkToFavPage() {
           <p className="mb-6">
             This ambitious project involves:
           </p>
-          <ul className="list-disc list-inside mb-6">
+          <ul className="list-disc list-inside mb-6 pl-4">
             <li>Developing character-specific language models</li>
             <li>Creating dynamic response generation algorithms</li>
             <li>Implementing real-time voice synthesis and emotion mapping</li>
@@ -101,13 +108,12 @@ export default function TalkToFavPage() {
           </p>
         </div>
 
-        {/* Support Call-to-Action */}
         <div className="mt-12 text-center">
           <Link 
             href="https://www.buymeacoffee.com/bbook43811" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="bg-yellow-400 text-gray-900 px-8 py-3 rounded-full text-xl font-bold hover:bg-yellow-300 transition duration-300 inline-block animate-pulse"
+            className="bg-blue-500 text-white px-8 py-3 rounded-full text-xl font-bold hover:bg-blue-600 transition duration-300 inline-block animate-pulse"
           >
             Support This Vision
           </Link>
@@ -115,7 +121,7 @@ export default function TalkToFavPage() {
             Every contribution brings us closer to making anime interactions a reality!
           </p>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
