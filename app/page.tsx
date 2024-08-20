@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
 
 export default function Home() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -25,7 +26,7 @@ export default function Home() {
           loop
           muted
           playsInline
-          className="absolute top-0 left-0 min-w-full min-h-full w-auto h-auto object-cover z-0"
+          className="absolute top-0 left-0 w-auto min-w-full min-h-full max-w-none object-cover md:object-center object-right"
           onError={(e) => {
             console.error("Video error:", e);
             setVideoError(true);
@@ -35,11 +36,11 @@ export default function Home() {
           Your browser does not support the video tag.
         </video>
       ) : (
-        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 z-0" />
+        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 md:bg-center bg-right bg-cover" />
       )}
 
       {/* Content Overlay */}
-      <div className="relative z-10 text-center mt-16">
+      <div className="relative z-10 text-center mt-16 px-4">
         <h1 className="text-4xl font-bold text-white mb-8 text-shadow-lg">Mood2Anime</h1>
         <div className="flex flex-col space-y-4">
           <Link 
