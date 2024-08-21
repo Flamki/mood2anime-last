@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Mood, Anime } from '../../../types';
+import { Anime, Mood } from '../../../types';
 import { getAnimeByMood } from '../../../lib/myAnimeList';
 
 interface AnimeDisplayProps {
@@ -42,17 +42,8 @@ export default function AnimeDisplay({ initialMood }: AnimeDisplayProps) {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-black">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="w-full h-full object-cover"
-        >
-          <source src="/loader.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
+      <div className="flex items-center justify-center min-h-screen bg-gray-900">
+        <div className="text-white text-2xl">Loading...</div>
       </div>
     );
   }
@@ -79,17 +70,18 @@ export default function AnimeDisplay({ initialMood }: AnimeDisplayProps) {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-900 p-4">
-      <div className="w-full max-w-2xl bg-gray-800 rounded-lg overflow-hidden shadow-xl">
+      <div className="w-full max-w-4xl bg-gray-800 rounded-lg overflow-hidden shadow-xl">
         <div className="relative w-full bg-gray-700" style={{ height: '400px' }}>
           <Image
             src={anime.main_picture.large}
             alt={anime.title}
             layout="fill"
-            objectFit="contain"
+            objectFit="cover"
+            className="rounded-t-lg"
           />
         </div>
         <div className="p-6">
-          <h2 className="text-3xl font-bold text-white mb-2 truncate">{anime.title}</h2>
+          <h2 className="text-3xl font-bold text-white mb-2">{anime.title}</h2>
           <div className="flex items-center text-gray-400 mb-4">
             <span className="mr-2">{anime.mean ? `⭐ ${anime.mean.toFixed(1)}/10` : 'Not rated'}</span>
             <span className="mr-2">•</span>
@@ -97,7 +89,7 @@ export default function AnimeDisplay({ initialMood }: AnimeDisplayProps) {
           </div>
           <div className="flex flex-wrap gap-2 mb-4">
             {anime.genres.map(genre => (
-              <span key={genre.id} className="px-2 py-1 bg-red-600 text-white text-sm rounded">
+              <span key={genre.id} className="px-2 py-1 bg-blue-600 text-white text-sm rounded">
                 {genre.name}
               </span>
             ))}
@@ -119,7 +111,7 @@ export default function AnimeDisplay({ initialMood }: AnimeDisplayProps) {
             <Link href="/moods" className="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-600">
               Change Mood
             </Link>
-            <button onClick={fetchAnime} className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-500">
+            <button onClick={fetchAnime} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500">
               Next Anime
             </button>
           </div>
