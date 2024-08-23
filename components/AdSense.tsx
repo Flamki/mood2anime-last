@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect } from 'react'
 
 declare global {
@@ -9,13 +11,13 @@ declare global {
 const AdSense = () => {
   useEffect(() => {
     try {
-        if (typeof window !== 'undefined' && window.adsbygoogle) {
-          (window.adsbygoogle = window.adsbygoogle || []).push({});
-        }
-      } catch (err) {
-        console.error(err)
+      if (typeof window !== 'undefined' && window.adsbygoogle) {
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
       }
-    }, [])
+    } catch (err) {
+      console.error(err)
+    }
+  }, [])
 
   return (
     <ins

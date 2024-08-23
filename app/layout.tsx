@@ -4,6 +4,9 @@ import './globals.css'
 import Navigation from '../components/Navigation'
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import Script from 'next/script'
+import dynamic from 'next/dynamic'
+
+const AdSense = dynamic(() => import('../components/AdSense'), { ssr: false })
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -86,10 +89,15 @@ export default function RootLayout({
         />
       </head>
       <body className={inter.className}>
-        <Navigation />
-        <main className="min-h-screen">
-          {children}
-        </main>
+        <div className="flex flex-col min-h-screen">
+          <Navigation />
+          <main className="flex-grow">
+            {children}
+          </main>
+          <footer className="mt-auto">
+            <AdSense />
+          </footer>
+        </div>
         <SpeedInsights />
         <Script id="schema-org" type="application/ld+json">
           {`
