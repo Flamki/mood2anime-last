@@ -52,10 +52,10 @@ export default function Navigation() {
             </svg>
           </button>
           <div className="hidden md:flex items-center space-x-6 mr-2">
-            <Link href="/moods" className="text-white hover:text-blue-300 transition-colors">Anime</Link>
-            <Link href="/manga/moods" className="text-white hover:text-blue-300 transition-colors">Manga</Link>
-            <Link href="/meme/moods" className="text-white hover:text-blue-300 transition-colors">Meme</Link>
-            <Link href="/talk-to-fav" className="text-white hover:text-blue-300 transition-colors">Chat</Link>
+            <Link href="/moods" className="text-white hover:text-green-300 transition-colors">Anime</Link>
+            <Link href="/manga/moods" className="text-white hover:text-green-300 transition-colors">Manga</Link>
+            <Link href="/meme/moods" className="text-white hover:text-green-300 transition-colors">Meme</Link>
+            <Link href="/talk-to-fav" className="text-white hover:text-green-300 transition-colors">Chat</Link>
             <SocialLinks />
           </div>
         </div>
@@ -85,10 +85,10 @@ export default function Navigation() {
               </button>
             </div>
             <div className="flex flex-col space-y-4">
-              <Link href="/moods" className="text-white text-xl hover:text-blue-300 transition-colors" onClick={() => setIsMenuOpen(false)}>Anime</Link>
-              <Link href="/manga/moods" className="text-white text-xl hover:text-blue-300 transition-colors" onClick={() => setIsMenuOpen(false)}>Manga</Link>
-              <Link href="/meme/moods" className="text-white text-xl hover:text-blue-300 transition-colors" onClick={() => setIsMenuOpen(false)}>Meme</Link>
-              <Link href="/talk-to-fav" className="text-white text-xl hover:text-blue-300 transition-colors" onClick={() => setIsMenuOpen(false)}>Chat</Link>
+              <Link href="/moods" className="text-white text-xl hover:text-green-300 transition-colors" onClick={() => setIsMenuOpen(false)}>Anime</Link>
+              <Link href="/manga/moods" className="text-white text-xl hover:text-green-300 transition-colors" onClick={() => setIsMenuOpen(false)}>Manga</Link>
+              <Link href="/meme/moods" className="text-white text-xl hover:text-green-300 transition-colors" onClick={() => setIsMenuOpen(false)}>Meme</Link>
+              <Link href="/talk-to-fav" className="text-white text-xl hover:text-green-300 transition-colors" onClick={() => setIsMenuOpen(false)}>Chat</Link>
             </div>
             <div className="mt-auto">
               <SocialLinks />

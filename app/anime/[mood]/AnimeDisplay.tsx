@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Anime, Mood } from '../../../types';
 import { getAnimeByMood } from '../../../lib/myAnimeList';
+import CustomLoader from '@/components/CustomLoader';
 
 interface AnimeDisplayProps {
   initialMood: Mood;
@@ -41,17 +42,13 @@ export default function AnimeDisplay({ initialMood }: AnimeDisplayProps) {
   };
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-900">
-        <div className="text-white text-2xl">Loading...</div>
-      </div>
-    );
+    return <CustomLoader />;
   }
 
   if (error) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-900">
-        <div className="text-red-500 text-2xl p-6 text-center">
+        <div className="text-red-500 text-xl sm:text-2xl p-4 sm:p-6 text-center">
           {error}
         </div>
       </div>
@@ -61,7 +58,7 @@ export default function AnimeDisplay({ initialMood }: AnimeDisplayProps) {
   if (!anime) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-900">
-        <div className="text-white text-2xl p-6 text-center">
+        <div className="text-white text-xl sm:text-2xl p-4 sm:p-6 text-center">
           No anime found
         </div>
       </div>
@@ -69,51 +66,56 @@ export default function AnimeDisplay({ initialMood }: AnimeDisplayProps) {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-900 p-4">
+    <div className="flex items-center justify-center min-h-screen bg-gray-900 p-2 sm:p-4">
       <div className="w-full max-w-4xl bg-gray-800 rounded-lg overflow-hidden shadow-xl">
-        <div className="relative w-full bg-gray-700" style={{ height: '400px' }}>
-          <Image
-            src={anime.main_picture.large}
-            alt={anime.title}
-            layout="fill"
-            objectFit="cover"
-            className="rounded-t-lg"
-          />
-        </div>
-        <div className="p-6">
-          <h2 className="text-3xl font-bold text-white mb-2">{anime.title}</h2>
-          <div className="flex items-center text-gray-400 mb-4">
-            <span className="mr-2">{anime.mean ? `⭐ ${anime.mean.toFixed(1)}/10` : 'Not rated'}</span>
-            <span className="mr-2">•</span>
-            <span>{anime.num_episodes ? `${anime.num_episodes} episodes` : 'Unknown episodes'}</span>
+        <div className="flex flex-col md:flex-row">
+          <div className="w-full md:w-1/2 flex justify-center items-start p-4">
+            <div className="relative w-full" style={{ maxWidth: '300px' }}>
+              <Image
+                src={anime.main_picture.large}
+                alt={anime.title}
+                width={300}
+                height={450}
+                layout="responsive"
+                className="rounded-lg"
+              />
+            </div>
           </div>
-          <div className="flex flex-wrap gap-2 mb-4">
-            {anime.genres.map(genre => (
-              <span key={genre.id} className="px-2 py-1 bg-blue-600 text-white text-sm rounded">
-                {genre.name}
-              </span>
-            ))}
-          </div>
-          <div className="text-gray-300 mb-6">
-            <p className={`${expanded ? '' : 'line-clamp-3'}`}>
-              {expanded ? anime.synopsis : truncateSynopsis(anime.synopsis, 250)}
-            </p>
-            {anime.synopsis.length > 250 && (
-              <button 
-                onClick={() => setExpanded(!expanded)} 
-                className="text-blue-400 hover:underline mt-2"
-              >
-                {expanded ? 'Read Less' : 'Read More'}
+          <div className="w-full md:w-1/2 p-4 sm:p-6">
+            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">{anime.title}</h2>
+            <div className="flex items-center text-gray-400 mb-2 sm:mb-4 text-sm sm:text-base">
+              <span className="mr-2">{anime.mean ? `⭐ ${anime.mean.toFixed(1)}/10` : 'Not rated'}</span>
+              <span className="mr-2">•</span>
+              <span>{anime.num_episodes ? `${anime.num_episodes} episodes` : 'Unknown episodes'}</span>
+            </div>
+            <div className="flex flex-wrap gap-1 sm:gap-2 mb-2 sm:mb-4">
+              {anime.genres.map(genre => (
+                <span key={genre.id} className="px-2 py-1 bg-blue-600 text-white text-xs sm:text-sm rounded">
+                  {genre.name}
+                </span>
+              ))}
+            </div>
+            <div className="text-gray-300 mb-4 sm:mb-6 text-sm sm:text-base">
+              <p className={`${expanded ? '' : 'line-clamp-3'}`}>
+                {expanded ? anime.synopsis : truncateSynopsis(anime.synopsis, 150)}
+              </p>
+              {anime.synopsis.length > 150 && (
+                <button 
+                  onClick={() => setExpanded(!expanded)} 
+                  className="text-blue-400 hover:underline mt-1 sm:mt-2 text-sm"
+                >
+                  {expanded ? 'Read Less' : 'Read More'}
+                </button>
+              )}
+            </div>
+            <div className="flex justify-between">
+              <Link href="/moods" className="bg-gray-700 text-white px-3 py-1 sm:px-4 sm:py-2 rounded text-sm sm:text-base hover:bg-gray-600">
+                Change Mood
+              </Link>
+              <button onClick={fetchAnime} className="bg-blue-600 text-white px-3 py-1 sm:px-4 sm:py-2 rounded text-sm sm:text-base hover:bg-blue-500">
+                Next Anime
               </button>
-            )}
-          </div>
-          <div className="flex justify-between">
-            <Link href="/moods" className="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-600">
-              Change Mood
-            </Link>
-            <button onClick={fetchAnime} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500">
-              Next Anime
-            </button>
+            </div>
           </div>
         </div>
       </div>
