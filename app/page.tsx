@@ -19,15 +19,83 @@ const SocialLink = ({ href, icon }: { href: string; icon: React.ReactNode }) => 
 
 export default function Home() {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [videoError, setVideoError] = useState(false);
+  const [videoError, setVideoError] = useState<string | null>(null);
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+  const [videoStatus, setVideoStatus] = useState('loading');
+  const [videoSrc, setVideoSrc] = useState<string>('');
 
   useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.play().catch(error => {
-        console.error("Error attempting to play video:", error);
-        setVideoError(true);
-      });
+    const handleResize = () => {
+      const smallScreen = window.innerWidth <= 768;
+      setIsSmallScreen(smallScreen);
+      setVideoSrc(smallScreen ? "/page-sm.mp4" : "/page.mp4");
+    };
+
+    window.addEventListener('resize', handleResize);
+    handleResize(); // Initial check on mount
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (video && videoSrc) {
+      const handleCanPlay = () => {
+        setVideoStatus('canplay');
+        video.play().catch(error => {
+          console.error("Error attempting to play video:", error);
+          setVideoError(`Play error: ${error.message}`);
+          setVideoStatus('error');
+        });
+      };
+
+      const handleError = (e: Event) => {
+        const videoElement = e.target as HTMLVideoElement;
+        const errorMessage = videoElement.error ? videoElement.error.message : 'Unknown error';
+        console.error("Video error:", errorMessage);
+        setVideoError(errorMessage);
+        setVideoStatus('error');
+      };
+
+      const logVideoState = () => {
+        console.log("Video network state:", video.networkState);
+        console.log("Video ready state:", video.readyState);
+        console.log("Current src:", video.currentSrc);
+      };
+
+      video.addEventListener('canplay', handleCanPlay);
+      video.addEventListener('error', handleError);
+      video.addEventListener('loadedmetadata', logVideoState);
+      video.addEventListener('loadeddata', logVideoState);
+
+      video.src = videoSrc;
+      video.load();
+
+      return () => {
+        video.removeEventListener('canplay', handleCanPlay);
+        video.removeEventListener('error', handleError);
+        video.removeEventListener('loadedmetadata', logVideoState);
+        video.removeEventListener('loadeddata', logVideoState);
+        video.pause();
+        video.src = '';
+        video.load();
+      };
     }
+  }, [videoSrc]);
+
+  // Safely remove preload link
+  useEffect(() => {
+    const removePreloadLink = () => {
+      const link = document.querySelector('link[rel="preload"][href^="https://pagead2.googlesyndication.com"]');
+      if (link && link.parentNode) {
+        link.parentNode.removeChild(link);
+      }
+    };
+
+    // Delay the removal slightly to ensure the DOM is fully loaded
+    const timeoutId = setTimeout(removePreloadLink, 0);
+
+    return () => clearTimeout(timeoutId);
   }, []);
 
   return (
@@ -37,18 +105,12 @@ export default function Home() {
         {!videoError ? (
           <video
             ref={videoRef}
-            autoPlay
             loop
             muted
             playsInline
-            className="absolute top-1/4 left-0 w-full h-auto object-cover transform -translate-y-1/4"
+            className={`absolute top-0 left-0 w-full h-full object-cover ${styles.videoBackground}`}
             style={{ minHeight: '100%', minWidth: '100%' }}
-            onError={(e) => {
-              console.error("Video error:", e);
-              setVideoError(true);
-            }}
           >
-            <source src="/page.mp4" type="video/mp4" />
             Your browser does not support the video tag.
           </video>
         ) : (
@@ -73,6 +135,13 @@ export default function Home() {
           </div>
         </div>
       </div>
+      
+      {/* Debug info
+      <div className="absolute bottom-0 left-0 bg-black bg-opacity-50 text-white p-2 text-xs">
+        Video Status: {videoStatus}<br/>
+        Error: {videoError || 'None'}<br/>
+        Video Source: {videoSrc}
+      </div> */}
     </div>
   );
 }
