@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import Navigation from '../components/Navigation'
@@ -10,23 +10,29 @@ const AdSense = dynamic(() => import('../components/AdSense'), { ssr: false })
 
 const inter = Inter({ subsets: ['latin'] })
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: '#000000',
+}
+
 export const metadata: Metadata = {
   metadataBase: new URL('https://mood2anime.com'),
   title: {
-    default: 'Mood2Anime - Find Anime Based on Your Mood',
+    default: 'Mood2Anime - Global Anime & Manga Discovery Platform',
     template: '%s | Mood2Anime'
   },
-  description: 'Mood2Anime helps you discover anime, manga, and memes that match your current mood. Get personalized recommendations for every emotion.',
-  keywords: ['mood2anime', 'anime recommendations', 'manga recommendations', 'anime mood', 'otaku', 'Japanese animation', 'mood-based anime'],
-  authors: [{ name: 'Mood2Anime Team', url: 'https://mood2anime.com' }],
-  creator: 'Mood2Anime Team',
+  description: 'Explore anime and manga from around the world based on your mood. Mood2Anime connects global fans with personalized recommendations, memes, and a vibrant community.',
+  keywords: ['mood2anime', 'global anime', 'international manga', 'anime recommendations', 'mood-based entertainment', 'otaku community', 'Japanese animation', 'global pop culture', 'anime memes', 'multilingual anime'],
+  authors: [{ name: 'Mood2Anime Global Team', url: 'https://mood2anime.com' }],
+  creator: 'Mood2Anime Global Team',
   publisher: 'Mood2Anime',
   alternates: {
     canonical: 'https://mood2anime.com',
   },
   openGraph: {
-    title: 'Mood2Anime - Discover Anime Based on Your Mood',
-    description: 'Find the perfect anime, manga, or meme to match your current mood with Mood2Anime. Personalized recommendations for every emotion.',
+    title: 'Mood2Anime - Discover Anime & Manga Worldwide',
+    description: 'Connect with anime and manga fans globally. Find content that matches your mood, explore diverse cultures, and join an international community of enthusiasts.',
     url: 'https://mood2anime.com',
     siteName: 'Mood2Anime',
     images: [
@@ -34,7 +40,7 @@ export const metadata: Metadata = {
         url: 'https://mood2anime.com/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'Mood2Anime - Personalized Anime Recommendations',
+        alt: 'Mood2Anime - Global Anime & Manga Community',
       },
     ],
     locale: 'en_US',
@@ -42,8 +48,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Mood2Anime - Find Your Perfect Anime Match',
-    description: 'Discover anime, manga, and memes tailored to your mood. Mood2Anime offers personalized recommendations for every emotion.',
+    title: 'Mood2Anime - Your Global Anime & Manga Companion',
+    description: 'Discover anime and manga from around the world, tailored to your mood. Join a global community of fans and explore Japanese culture internationally.',
     creator: '@mood2anime',
     images: ['https://mood2anime.com/twitter-image.jpg'],
   },
@@ -71,6 +77,7 @@ export const metadata: Metadata = {
       { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
     ],
   },
+  category: 'Entertainment',
 }
 
 export default function RootLayout({
@@ -106,7 +113,7 @@ export default function RootLayout({
               "@type": "WebSite",
               "name": "Mood2Anime",
               "url": "https://mood2anime.com",
-              "description": "Discover anime, manga, and memes that match your mood. Mood2Anime offers personalized recommendations for every emotion.",
+              "description": "Explore anime and manga from around the world based on your mood. Mood2Anime connects global fans with personalized recommendations, memes, and a vibrant community.",
               "potentialAction": {
                 "@type": "SearchAction",
                 "target": "https://mood2anime.com/search?q={search_term_string}",
