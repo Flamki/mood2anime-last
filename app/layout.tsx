@@ -94,6 +94,16 @@ export default function RootLayout({
           crossOrigin="anonymous"
           strategy="afterInteractive"
         />
+        <Script id="infolinks-setup" strategy="afterInteractive">
+          {`
+            var infolinks_pid = 3424750;
+            var infolinks_wsid = 0;
+          `}
+        </Script>
+        <Script 
+          src="//resources.infolinks.com/js/infolinks_main.js"
+          strategy="afterInteractive"
+        />
       </head>
       <body className={inter.className}>
         <div className="flex flex-col min-h-screen">
