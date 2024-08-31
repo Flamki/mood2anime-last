@@ -11,7 +11,7 @@ const TopBanner = () => {
         className="block bg-yellow-400 text-black py-2 text-center font-bold hover:bg-yellow-300 transition-colors duration-300"
       >
         <div className="flex items-center justify-center">
-          <span>CLAIM YOUR FREE MERCH</span>
+          <span>Earn 2x money</span>
           <svg 
             xmlns="http://www.w3.org/2000/svg" 
             className="h-5 w-5 ml-2" 

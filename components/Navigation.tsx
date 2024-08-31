@@ -2,26 +2,12 @@
 
 'use client';
 
+import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
 
-export default function Navigation() {
+const Navigation: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const navbar = document.querySelector('nav');
-      if (window.scrollY > 50) {
-        navbar?.classList.add('bg-black', 'bg-opacity-50', 'backdrop-filter', 'backdrop-blur-lg');
-      } else {
-        navbar?.classList.remove('bg-black', 'bg-opacity-50', 'backdrop-filter', 'backdrop-blur-lg');
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   const SocialLinks = () => (
     <div className="flex space-x-4">
@@ -44,45 +30,43 @@ export default function Navigation() {
   );
 
   return (
-    <>
-      <nav className="fixed top-[40px] left-0 right-0 z-40 bg-transparent transition-all duration-300">
-        <div className="container mx-auto flex justify-between items-center">
-          <Link href="/" className="flex items-center">
-            <div className="relative w-[300px] h-[80px] md:w-[450px] md:h-[120px]">
-              <Image
-                src="/nav-name.png"
-                alt="Mood2Anime"
-                fill
-                sizes="(max-width: 768px) 300px, 450px"
-                style={{ objectFit: 'contain' }}
-                priority
-              />
-            </div>
-          </Link>
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="text-white focus:outline-none md:hidden mr-2"
-          >
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
-          <div className="hidden md:flex items-center space-x-6 mr-2">
-            <Link href="/moods" className="text-white hover:text-green-300 transition-colors">Anime</Link>
-            <Link href="/manga/moods" className="text-white hover:text-green-300 transition-colors">Manga</Link>
-            <Link href="/meme/moods" className="text-white hover:text-green-300 transition-colors">Meme</Link>
-            <Link href="/talk-to-fav" className="text-white hover:text-green-300 transition-colors">Chat</Link>
-            <SocialLinks />
+    <nav className="w-full bg-transparent">
+      <div className="container mx-auto px-4 flex justify-between items-center h-16">
+        <Link href="/" className="flex items-center">
+          <div className="relative w-[200px] h-[50px] md:w-[300px] md:h-[75px]">
+            <Image
+              src="/nav-name.png"
+              alt="Mood2Anime"
+              fill
+              sizes="(max-width: 768px) 200px, 300px"
+              style={{ objectFit: 'contain' }}
+              priority
+            />
           </div>
+        </Link>
+        <button
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          className="text-white focus:outline-none md:hidden"
+        >
+          <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+        <div className="hidden md:flex items-center space-x-6">
+          <Link href="/moods" className="text-white hover:text-green-300 transition-colors">Anime</Link>
+          <Link href="/manga/moods" className="text-white hover:text-green-300 transition-colors">Manga</Link>
+          <Link href="/meme/moods" className="text-white hover:text-green-300 transition-colors">Meme</Link>
+          <Link href="/talk-to-fav" className="text-white hover:text-green-300 transition-colors">Chat</Link>
+          <SocialLinks />
         </div>
-      </nav>
+      </div>
 
       {/* Mobile menu */}
       {isMenuOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-90 z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-90 z-50 md:hidden">
           <div className="container mx-auto p-4 flex flex-col h-full">
             <div className="flex justify-between items-center mb-8">
-              <div className="relative w-[300px] h-[80px]">
+              <div className="relative w-[200px] h-[50px]">
                 <Image
                   src="/nav-name.png"
                   alt="Mood2Anime"
@@ -112,6 +96,8 @@ export default function Navigation() {
           </div>
         </div>
       )}
-    </>
+    </nav>
   );
-}
+};
+
+export default Navigation;

@@ -1,6 +1,6 @@
-import type { Config } from 'tailwindcss'
+// tailwind.config.js
 
-const config: Config = {
+module.exports = {
   content: [
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
@@ -9,53 +9,39 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // You can add custom colors here if needed
-        // For example:
-        // primary: '#3490dc',
-        // secondary: '#ffed4a',
+        'neon-blue': '#00f3ff',
+        'neon-pink': '#ff00ff',
+        'deep-purple': '#120038',
       },
-      fontFamily: {
-        // Add custom fonts here if you're using any
-        // For example:
-        // sans: ['Graphik', 'sans-serif'],
-        // serif: ['Merriweather', 'serif'],
+      animation: {
+        'gradient-x': 'gradient-x 15s ease infinite',
+        'pulse-neon': 'pulse-neon 2s infinite',
       },
-      spacing: {
-        // Add custom spacing values if needed
-        // For example:
-        // '128': '32rem',
+      keyframes: {
+        'gradient-x': {
+          '0%, 100%': {
+            'background-size': '200% 200%',
+            'background-position': 'left center',
+          },
+          '50%': {
+            'background-size': '200% 200%',
+            'background-position': 'right center',
+          },
+        },
+        'pulse-neon': {
+          '0%, 100%': {
+            opacity: 1,
+          },
+          '50%': {
+            opacity: 0.5,
+          },
+        },
       },
-      borderRadius: {
-        // Add custom border radius values if needed
-        // For example:
-        // 'xl': '1rem',
-      },
-      backdropFilter: {
-        // Add custom backdrop filter values if needed
-        // For example:
-        // 'none': 'none',
-        // 'blur': 'blur(20px)',
-      },
-      backdropBlur: {
-        // Add custom backdrop blur values if needed
-        // For example:
-        // 'none': 'none',
-        // 'md': '12px',
+      boxShadow: {
+        'neon': '0 0 5px theme("colors.neon-blue"), 0 0 20px theme("colors.neon-blue")',
+        'neon-strong': '0 0 5px theme("colors.neon-blue"), 0 0 20px theme("colors.neon-blue"), 0 0 35px theme("colors.neon-blue"), 0 0 50px theme("colors.neon-blue")',
       },
     },
   },
-  plugins: [
-    // Add any Tailwind CSS plugins here
-    // For example:
-    // require('@tailwindcss/forms'),
-    // require('@tailwindcss/typography'),
-  ],
-  variants: {
-    extend: {
-      backdropFilter: ['responsive'],
-      backdropBlur: ['responsive'],
-    },
-  },
+  plugins: [],
 }
-
-export default config
