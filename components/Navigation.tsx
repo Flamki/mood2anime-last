@@ -1,3 +1,5 @@
+// components/Navigation.tsx
+
 'use client';
 
 import Link from 'next/link';
@@ -41,10 +43,9 @@ export default function Navigation() {
     </div>
   );
 
-  // Rest of the component remains unchanged
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-transparent transition-all duration-300">
+      <nav className="fixed top-[40px] left-0 right-0 z-40 bg-transparent transition-all duration-300">
         <div className="container mx-auto flex justify-between items-center">
           <Link href="/" className="flex items-center">
             <div className="relative w-[300px] h-[80px] md:w-[450px] md:h-[120px]">
